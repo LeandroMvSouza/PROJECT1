@@ -6,8 +6,7 @@ void Graph::addEdge(casa node1, casa node2)
 	vector<casa> to_add = adjList[key];
 	to_add.push_back(node2);
 	adjList[key] = to_add;
-    //adjList[key].push_back(node2);
-    //adjList[node2].push_back(node1);
+    //adjList[node1.pos].push_back(node2);
 
 }
 
@@ -15,13 +14,14 @@ void Graph::bfs(casa src,casa desired)
 {	
 	int count_while=0;
 	int count_for=0;
-	//int count_iterator=0;
+	//int count_layer=0;
 	
     queue<casa> q;
     map<string, bool> visited;
     q.push(src);
     visited[src.pos] = true;
-    //Graph::Layer[count_iterator].push_back(src);
+    // ad src to Graph::Layer[count_layer];
+    // count_layer++;
     
     while(!q.empty())
     {
@@ -35,16 +35,18 @@ void Graph::bfs(casa src,casa desired)
         for(auto i = adjList[node.pos].begin(); i != adjList[node.pos].end(); i++)
         {
         	count_for+=1;
-        	cout<<"Item "<<count_for<<" da lista = "<<*i.pos<<endl;
-        	if(!visited[*i.pos])
+        	string aux = (*i).pos;
+        	cout<<"Item "<<count_for<<" da lista = "<<aux<<endl;
+        	if(!visited[aux])
 			{
-				cout<<*i.pos<<" nao foi visitado! Marcando-o como visitado e colocando-o na queue."<<endl;
-				visited[**i.pos]=true;
+				cout<<aux<<" nao foi visitado! Marcando-o como visitado e colocando-o na queue."<<endl;
+				visited[aux]=true;
 				q.push(*i);
+				// add *i to Graph::Layer[count_layer]
+				// count_layer++;
 			}
 		}
 		count_for=0;
     }
     
 }
-
