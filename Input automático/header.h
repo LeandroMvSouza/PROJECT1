@@ -2,6 +2,7 @@
 #define HEADER_H
 
 #include <bits/stdc++.h>
+#include <stdio.h>
 #include <fstream>
 
 using namespace std;
@@ -11,7 +12,7 @@ typedef struct casa{
 	int posX;
 	int posY;
 	string pos;
-	char player_id;
+	int player_id;
 }casa;
 
 typedef struct vector<vector<casa>> layers;
@@ -24,7 +25,7 @@ public:
     void bfs(casa src,casa desired);
     
     int turns_it_takes_to_win;
-    char player_id;
+    int player_id;
     
     bool can_win = false;
     layers layers_set;

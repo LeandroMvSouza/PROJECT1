@@ -1,13 +1,20 @@
 #include "header.h"
+
+#define MAX 999999999
+
 int main(int argc,char* argv [])
 {
 	if(argc>1)
 	{
 		ifstream entrada;
 		entrada.open(argv[1]);
-		
+		if (!entrada) {
+    		cerr << "Nao foi possivel abrir o arquivo";
+    		exit(1);
+		}
 		int N,M,K;
 		int posX,posY;
+		int pulos;
 		int count = 0; // Contador para jogadores relevantes
 		
 		/*
@@ -28,97 +35,59 @@ int main(int argc,char* argv [])
 		/*
 		cout<<"Preencha cada casa do tabuleiro"<<endl;
 		*/
-		if(N==1){ // Nesse caso, cada casa com jump_steps>0 comporta no máximo 2 movimentos possíveis -> para esquerda; para direita
+		for(int i=0;i<N;i++){
 			for(int j=0;j<M;j++)
 			{
-				entrada>>tabuleiro[0][j].jump_steps;
-				tabuleiro[0][j].posX=0;
-				tabuleiro[0][j].posY=j;
-				tabuleiro[0][j].pos = pos_as_string(tabuleiro[0][j]);
-				
-				from_vertex = tabuleiro[0][j];
-				
+				entrada>>pulos;
+				tabuleiro[i][j].jump_steps = pulos;
+				//entrada>>tabuleiro[i][j].jump_steps;
+				tabuleiro[i][j].posX=i;
+				tabuleiro[i][j].posY=j;
+				tabuleiro[i][j].pos = pos_as_string(tabuleiro[i][j]);
+			
+				from_vertex = tabuleiro[i][j];
 				// Esquerda (-y)
-				if( (tabuleiro[0][j].posY - tabuleiro[0][j].jump_steps) >= 0 )
+				if( (tabuleiro[i][j].posY - tabuleiro[i][j].jump_steps) >= 0 )
 				{
-					to_vertex = mov_Esquerda(tabuleiro[0][j]);
+					to_vertex = mov_Esquerda(tabuleiro[i][j]);
 					g.addEdge(from_vertex,to_vertex);
 				}
 				// Direita (+y)
-				if( (tabuleiro[0][j].posY + tabuleiro[0][j].jump_steps) <= (M-1) )
+				if( (tabuleiro[i][j].posY + tabuleiro[i][j].jump_steps) <= (M-1) )
 				{
-					to_vertex = mov_Direita(tabuleiro[0][j]);
+					to_vertex = mov_Direita(tabuleiro[i][j]);
+					g.addEdge(from_vertex,to_vertex);
+				}
+				// Cima (-x)
+				if( ((tabuleiro[i][j].posX - tabuleiro[i][j].jump_steps) >= 0) and (N>1) )
+				{
+					to_vertex = mov_Cima(tabuleiro[i][j]);
+						g.addEdge(from_vertex,to_vertex);
+				}
+				// Baixo (+x)
+				if( ((tabuleiro[i][j].posX + tabuleiro[i][j].jump_steps) <= (N-1)) and (N>1))
+				{
+					to_vertex = mov_Baixo(tabuleiro[i][j]);
 					g.addEdge(from_vertex,to_vertex);
 				}
 			}
-			goal = tabuleiro[N-1][M-1];
 		}
-		
-		else if(N>1){ // Nesse caso, cada casa com jump_steps>0 comporta 4 movimentos possíveis -> para esquerda; para direita; para cima; para baixo
-			for(int i=0;i<N;i++)
-			{
-				for(int j=0;j<M;j++)
-				{
-					entrada>>tabuleiro[i][j].jump_steps;
-					tabuleiro[i][j].posX=i;
-					tabuleiro[i][j].posY=j;
-					tabuleiro[i][j].pos = pos_as_string(tabuleiro[i][j]);
-				
-					from_vertex = tabuleiro[i][j];
-					// Esquerda (-y)
-					if( (tabuleiro[i][j].posY - tabuleiro[i][j].jump_steps) >= 0 )
-					{
-						to_vertex = mov_Esquerda(tabuleiro[i][j]);
-						g.addEdge(from_vertex,to_vertex);
-					}
-					// Direita (+y)
-					if( (tabuleiro[i][j].posY + tabuleiro[i][j].jump_steps) <= (M-1) )
-					{
-						to_vertex = mov_Direita(tabuleiro[i][j]);
-						g.addEdge(from_vertex,to_vertex);
-					}
-					// Cima (-x)
-					if( (tabuleiro[i][j].posX - tabuleiro[i][j].jump_steps) >= 0 )
-					{
-						to_vertex = mov_Cima(tabuleiro[i][j]);
-							g.addEdge(from_vertex,to_vertex);
-					}
-					// Baixo (+x)
-					if( (tabuleiro[i][j].posX + tabuleiro[i][j].jump_steps) <= (N-1) )
-					{
-						to_vertex = mov_Baixo(tabuleiro[i][j]);
-						g.addEdge(from_vertex,to_vertex);
-					}
-				}
-			}
-			goal = tabuleiro[N-1][M-1];
-		}
-		
+		goal = tabuleiro[N-1][M-1];		
 		Graph Player[K];
-		goal = tabuleiro[N-1][M-1];
 				
-		char jogador = int_as_char(0);
-		Player[0].player_id = jogador;
-		Player[0].adjList = g.adjList;
+		int min = MAX; // Esse inteiro armazenará o menor número de turnos necessários para que um jogador ganhe o jogo. Inicialmente atribuímos à ele um valor arbitrariamente grande MAX
 		/*
 		cout<<endl<<"Entre a casa em que o jogador "<<jogador<<" ira comecar :";
 		*/
-		entrada>>posX>>posY;
-		Player[0].bfs(tabuleiro[posX][posY],goal);
-		
-		int min; // minimum number of turns it takes to win
-		min = Player[0].turns_it_takes_to_win;
-		
-		for(int i = 1;i<K;i++){ // Gerando o conjunto de layers de cada jogador e descobrindo qual o número mínimo de turnos necessários para alguém ganhar
-			jogador = int_as_char(i);
-			Player[i].player_id = jogador;
+		for(int i = 0;i<K;i++){ // Gerando o conjunto de layers de cada jogador e descobrindo qual o número mínimo de turnos necessários para alguém ganhar
+			Player[i].player_id = i;
 			Player[i].adjList = g.adjList;
 			/*
 			cout<<endl<<"Entre a casa em que o jogador "<<jogador<<" ira comecar :";
 			*/
 			entrada>>posX>>posY;
 			Player[i].bfs(tabuleiro[posX][posY],goal);
-	
+			
 			if(Player[i].turns_it_takes_to_win < min)
 			{
 				min = Player[i].turns_it_takes_to_win;
@@ -128,6 +97,8 @@ int main(int argc,char* argv [])
 			cout<<"===================================="<<endl;
 			*/
 		}
+		// Fechando o arquivo de entrada, uma vez que ele já foi percorrido
+		entrada.close();
 		
 		vector<Graph> Relevant_Players;
 		for(int i = 0;i<K;i++){
@@ -193,9 +164,13 @@ int main(int argc,char* argv [])
 				cout<<"======================================="<<endl;
 				*/
 			}
+			/*
 			char quem_ganhou = winner.player_id;
 			cout<<quem_ganhou<<endl;
-			cout<<min<<endl;
+			*/
+			int ascii = winner.player_id+65;
+			printf("%c",ascii);
+			cout<<endl<<min<<endl;
 		}
 	}
 	return 0; 
