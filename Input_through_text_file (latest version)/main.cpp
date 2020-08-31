@@ -135,7 +135,6 @@ int main(int argc,char* argv [])
 						}
 					}
 					if(found){
-						aux.clear();
 						break;
 					}
 				}
