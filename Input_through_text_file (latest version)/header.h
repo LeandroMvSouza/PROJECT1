@@ -33,6 +33,7 @@ public:
 
 // Auxiliary Functions
 string pos_as_string(casa start);
+char int_as_char(int player);
 bool compare(const casa h1,const casa h2);
 // Movement Functions
 casa mov_Esquerda(casa start);

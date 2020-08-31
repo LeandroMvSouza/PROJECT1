@@ -19,12 +19,7 @@ int main(int argc,char* argv [])
 		
 		entrada>>N>>M;
 		entrada>>K;
-		/*
-		casa **tabuleiro= (casa**)malloc(N*sizeof(casa*));
-		for(int i=0;i<N;i++){
-			tabuleiro[i] = (casa*)malloc(M*sizeof(casa));
-		}
-		*/
+		
 		casa tabuleiro[N][M];
 		Graph g;
 		casa goal;
@@ -36,6 +31,7 @@ int main(int argc,char* argv [])
 			{
 				entrada>>pulos;
 				tabuleiro[i][j].jump_steps = pulos;
+				//entrada>>tabuleiro[i][j].jump_steps;
 				tabuleiro[i][j].posX=i;
 				tabuleiro[i][j].posY=j;
 				tabuleiro[i][j].pos = pos_as_string(tabuleiro[i][j]);
@@ -83,6 +79,10 @@ int main(int argc,char* argv [])
 			{
 				min = Player[i].turns_it_takes_to_win;
 			}
+			//
+			cout<<"====================================END===================================="<<endl;
+			cout<<"================================NEXT_PLAYER================================"<<endl;
+			//
 		}
 		// Fechando o arquivo de entrada, uma vez que ele já foi percorrido
 		entrada.close();
@@ -107,7 +107,14 @@ int main(int argc,char* argv [])
 			int num_players = Relevant_Players.size();
 			int num_houses;
 			int count_while = 0;
+			//
+			cout<<"Temos "<<Relevant_Players.size()<<" jogadores relevantes!"<<endl;
+			cout<<"Rodada final = "<<min<<endl;
+			//
 			while(!found){
+				//
+				cout<<"==========While_Loop -> "<<count_while<<" ============"<<endl;
+				//
 				for(int i=0;i < num_players;i++){
 				
 					num_houses = Relevant_Players[i].layers_set[min-count_while].size();
@@ -120,6 +127,12 @@ int main(int argc,char* argv [])
 				}
 				
 				sort(aux.begin(),aux.end(),compare);
+				//
+				cout<<"Printando aux :"<<endl;
+				for(unsigned long int i = 0;i<aux.size();i++){
+					cout<<"aux["<<i<<"] -> player_id = "<<aux[i].player_id<<" jump_steps = "<<aux[i].jump_steps<<endl;
+				}
+				//
 				for(long unsigned int i = 0;i < aux.size();i++){
 					for(long unsigned int j=1;j<aux.size()-i;j++)
 					{
@@ -133,6 +146,10 @@ int main(int argc,char* argv [])
 				}
 				aux.clear();
 				count_while+=1;
+				//
+				cout<<"***************************************"<<endl;
+				cout<<"======================================="<<endl;
+				//
 			}
 			
 			int ascii_rep = winner.player_id+65;

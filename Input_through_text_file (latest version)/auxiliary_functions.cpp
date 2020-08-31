@@ -5,6 +5,12 @@ string pos_as_string(casa start){
 	return ( to_string(start.posX) + "_" + to_string(start.posY) );
 }
 
+char int_as_char(int player){
+	char c;
+	c = player + 65;
+	return c;
+}
+
 bool compare(const casa h1,const casa h2){
 	return (h1.jump_steps < h2.jump_steps);
 }
