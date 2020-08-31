@@ -17,30 +17,25 @@ int main(int argc,char* argv [])
 		int pulos;
 		int count = 0; // Contador para jogadores relevantes
 		
-		/*
-		cout<<"Entre a dimensao do tabuleiro"<<endl;
-		*/
 		entrada>>N>>M;
-		/*
-		cout<<"Entre o numero de jogadores"<<endl;
-		*/
 		entrada>>K;
-		
+		/*
+		casa **tabuleiro= (casa**)malloc(N*sizeof(casa*));
+		for(int i=0;i<N;i++){
+			tabuleiro[i] = (casa*)malloc(M*sizeof(casa));
+		}
+		*/
 		casa tabuleiro[N][M];
 		Graph g;
 		casa goal;
 		casa from_vertex;
 		casa to_vertex;
 		
-		/*
-		cout<<"Preencha cada casa do tabuleiro"<<endl;
-		*/
 		for(int i=0;i<N;i++){
 			for(int j=0;j<M;j++)
 			{
 				entrada>>pulos;
 				tabuleiro[i][j].jump_steps = pulos;
-				//entrada>>tabuleiro[i][j].jump_steps;
 				tabuleiro[i][j].posX=i;
 				tabuleiro[i][j].posY=j;
 				tabuleiro[i][j].pos = pos_as_string(tabuleiro[i][j]);
@@ -76,15 +71,11 @@ int main(int argc,char* argv [])
 		Graph Player[K];
 				
 		int min = MAX; // Esse inteiro armazenará o menor número de turnos necessários para que um jogador ganhe o jogo. Inicialmente atribuímos à ele um valor arbitrariamente grande MAX
-		/*
-		cout<<endl<<"Entre a casa em que o jogador "<<jogador<<" ira comecar :";
-		*/
+
 		for(int i = 0;i<K;i++){ // Gerando o conjunto de layers de cada jogador e descobrindo qual o número mínimo de turnos necessários para alguém ganhar
 			Player[i].player_id = i;
 			Player[i].adjList = g.adjList;
-			/*
-			cout<<endl<<"Entre a casa em que o jogador "<<jogador<<" ira comecar :";
-			*/
+
 			entrada>>posX>>posY;
 			Player[i].bfs(tabuleiro[posX][posY],goal);
 			
@@ -92,10 +83,6 @@ int main(int argc,char* argv [])
 			{
 				min = Player[i].turns_it_takes_to_win;
 			}
-			/*
-			cout<<"===================================="<<endl;
-			cout<<"===================================="<<endl;
-			*/
 		}
 		// Fechando o arquivo de entrada, uma vez que ele já foi percorrido
 		entrada.close();
@@ -120,14 +107,7 @@ int main(int argc,char* argv [])
 			int num_players = Relevant_Players.size();
 			int num_houses;
 			int count_while = 0;
-			/*
-			cout<<"Temos "<<Relevant_Players.size()<<" jogadores relevantes!"<<endl;
-			cout<<"Rodada final = "<<min<<endl;
-			*/
 			while(!found){
-				/*
-				cout<<"==========While_Loop -> "<<count_while<<" ============"<<endl;
-				*/
 				for(int i=0;i < num_players;i++){
 				
 					num_houses = Relevant_Players[i].layers_set[min-count_while].size();
@@ -140,12 +120,6 @@ int main(int argc,char* argv [])
 				}
 				
 				sort(aux.begin(),aux.end(),compare);
-				/*
-				cout<<"Printando aux :"<<endl;
-				for(int i = 0;i<aux.size();i++){
-					cout<<"aux["<<i<<"] -> player_id = "<<aux[i].player_id<<" jump_steps = "<<aux[i].jump_steps<<endl;
-				}
-				*/
 				for(long unsigned int i = 0;i < aux.size();i++){
 					for(long unsigned int j=1;j<aux.size()-i;j++)
 					{
@@ -159,17 +133,10 @@ int main(int argc,char* argv [])
 				}
 				aux.clear();
 				count_while+=1;
-				/*
-				cout<<"***************************************"<<endl;
-				cout<<"======================================="<<endl;
-				*/
 			}
-			/*
-			char quem_ganhou = winner.player_id;
-			cout<<quem_ganhou<<endl;
-			*/
-			int ascii = winner.player_id+65;
-			printf("%c",ascii);
+			
+			int ascii_rep = winner.player_id+65;
+			printf("%c",ascii_rep);
 			cout<<endl<<min<<endl;
 		}
 	}

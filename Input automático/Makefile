@@ -1,7 +1,7 @@
 #--Vars--
 
 CC=g++ # compilador, troque para gcc se preferir utilizar C
-CFLAGS=-Wall -Wextra -std=c++11# compiler flags, troque o que quiser, exceto bibliotecas externas
+CFLAGS=-Wall -Wextra -std=c++11 # compiler flags, troque o que quiser, exceto bibliotecas externas
 EXEC=./tp1 # nome do executavel que sera gerado
 TMPOUT=tp1.testresult
 
