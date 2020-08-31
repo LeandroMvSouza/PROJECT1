@@ -32,12 +32,11 @@ public:
 };
 
 // Auxiliary Functions
-string pos_as_string(casa start);
-char int_as_char(int player);
+string pos_as_string(int posX,int posY);
 bool compare(const casa h1,const casa h2);
 // Movement Functions
-casa mov_Esquerda(casa start);
-casa mov_Direita(casa start);
-casa mov_Cima(casa start);
-casa mov_Baixo(casa start);
+casa mov_Esquerda(casa* start);
+casa mov_Direita(casa* start);
+casa mov_Cima(casa* start);
+casa mov_Baixo(casa* start);
 #endif

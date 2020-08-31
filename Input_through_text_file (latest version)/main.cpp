@@ -20,7 +20,6 @@ int main(int argc,char* argv [])
 		entrada>>N>>M;
 		entrada>>K;
 		
-		casa tabuleiro[N][M];
 		Graph g;
 		casa goal;
 		casa from_vertex;
@@ -30,59 +29,65 @@ int main(int argc,char* argv [])
 			for(int j=0;j<M;j++)
 			{
 				entrada>>pulos;
-				tabuleiro[i][j].jump_steps = pulos;
-				//entrada>>tabuleiro[i][j].jump_steps;
-				tabuleiro[i][j].posX=i;
-				tabuleiro[i][j].posY=j;
-				tabuleiro[i][j].pos = pos_as_string(tabuleiro[i][j]);
-			
-				from_vertex = tabuleiro[i][j];
+				casa *to_add = new casa;
+				to_add->jump_steps = pulos;
+				to_add->posX = i;
+				to_add->posY = j;
+				to_add->pos = pos_as_string(i,j);
+				
+				if((i==N-1) and (j==M-1)){
+					goal = (*to_add);
+				}
+
+				from_vertex = (*to_add);
 				// Esquerda (-y)
-				if( (tabuleiro[i][j].posY - tabuleiro[i][j].jump_steps) >= 0 )
+				if( (to_add->posY - to_add->jump_steps) >= 0 )
 				{
-					to_vertex = mov_Esquerda(tabuleiro[i][j]);
+					to_vertex = mov_Esquerda(to_add);
 					g.addEdge(from_vertex,to_vertex);
 				}
 				// Direita (+y)
-				if( (tabuleiro[i][j].posY + tabuleiro[i][j].jump_steps) <= (M-1) )
+				if( (to_add->posY + to_add->jump_steps) <= (M-1) )
 				{
-					to_vertex = mov_Direita(tabuleiro[i][j]);
+					to_vertex = mov_Direita(to_add);
 					g.addEdge(from_vertex,to_vertex);
 				}
 				// Cima (-x)
-				if( ((tabuleiro[i][j].posX - tabuleiro[i][j].jump_steps) >= 0) and (N>1) )
+				if( ((to_add->posX - to_add->jump_steps) >= 0) and (N>1) )
 				{
-					to_vertex = mov_Cima(tabuleiro[i][j]);
-						g.addEdge(from_vertex,to_vertex);
-				}
-				// Baixo (+x)
-				if( ((tabuleiro[i][j].posX + tabuleiro[i][j].jump_steps) <= (N-1)) and (N>1))
-				{
-					to_vertex = mov_Baixo(tabuleiro[i][j]);
+					to_vertex = mov_Cima(to_add);
 					g.addEdge(from_vertex,to_vertex);
 				}
+				// Baixo (+x)
+				if( ((to_add->posX + to_add->jump_steps) <= (N-1)) and (N>1))
+				{
+					to_vertex = mov_Baixo(to_add);
+					g.addEdge(from_vertex,to_vertex);
+				}
+				free(to_add);
 			}
 		}
-		goal = tabuleiro[N-1][M-1];		
-		Graph Player[K];
-				
+		
+		Graph Player[K];		
 		int min = MAX; // Esse inteiro armazenará o menor número de turnos necessários para que um jogador ganhe o jogo. Inicialmente atribuímos à ele um valor arbitrariamente grande MAX
 
 		for(int i = 0;i<K;i++){ // Gerando o conjunto de layers de cada jogador e descobrindo qual o número mínimo de turnos necessários para alguém ganhar
 			Player[i].player_id = i;
 			Player[i].adjList = g.adjList;
-
+			
 			entrada>>posX>>posY;
-			Player[i].bfs(tabuleiro[posX][posY],goal);
+			casa* to_add = new casa;
+			to_add->posX = posX;
+			to_add->posY = posY;
+			to_add->pos = pos_as_string(posX,posY);
+			
+			Player[i].bfs( (*to_add) ,goal);
 			
 			if(Player[i].turns_it_takes_to_win < min)
 			{
 				min = Player[i].turns_it_takes_to_win;
 			}
-			//
-			cout<<"====================================END===================================="<<endl;
-			cout<<"================================NEXT_PLAYER================================"<<endl;
-			//
+			free(to_add);
 		}
 		// Fechando o arquivo de entrada, uma vez que ele já foi percorrido
 		entrada.close();
@@ -107,14 +112,7 @@ int main(int argc,char* argv [])
 			int num_players = Relevant_Players.size();
 			int num_houses;
 			int count_while = 0;
-			//
-			cout<<"Temos "<<Relevant_Players.size()<<" jogadores relevantes!"<<endl;
-			cout<<"Rodada final = "<<min<<endl;
-			//
 			while(!found){
-				//
-				cout<<"==========While_Loop -> "<<count_while<<" ============"<<endl;
-				//
 				for(int i=0;i < num_players;i++){
 				
 					num_houses = Relevant_Players[i].layers_set[min-count_while].size();
@@ -127,14 +125,8 @@ int main(int argc,char* argv [])
 				}
 				
 				sort(aux.begin(),aux.end(),compare);
-				//
-				cout<<"Printando aux :"<<endl;
-				for(unsigned long int i = 0;i<aux.size();i++){
-					cout<<"aux["<<i<<"] -> player_id = "<<aux[i].player_id<<" jump_steps = "<<aux[i].jump_steps<<endl;
-				}
-				//
-				for(long unsigned int i = 0;i < aux.size();i++){
-					for(long unsigned int j=1;j<aux.size()-i;j++)
+				for(long unsigned int i=0 ; i<aux.size() ; i++){
+					for(long unsigned int j=1 ; j<aux.size()-i ; j++)
 					{
 						if( (aux[i].player_id!=aux[j].player_id) and (aux[i].jump_steps<aux[j].jump_steps) ){
 							winner = aux[i];
@@ -142,14 +134,13 @@ int main(int argc,char* argv [])
 							break;
 						}
 					}
-					if(found){break;}
+					if(found){
+						aux.clear();
+						break;
+					}
 				}
 				aux.clear();
 				count_while+=1;
-				//
-				cout<<"***************************************"<<endl;
-				cout<<"======================================="<<endl;
-				//
 			}
 			
 			int ascii_rep = winner.player_id+65;
